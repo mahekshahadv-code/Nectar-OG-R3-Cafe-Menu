@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 import { CheckCircle2, X } from "lucide-react";
 import { placeOrder } from "../lib/data";
