@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { BarChart3, Check, Edit3, ExternalLink, LogOut, Plus, QrCode, RefreshCw, Save, Settings, Trash2, X } from "lucide-react";
