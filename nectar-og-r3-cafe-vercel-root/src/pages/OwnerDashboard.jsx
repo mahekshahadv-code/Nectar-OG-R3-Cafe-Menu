@@ -16,8 +16,26 @@ export default function OwnerDashboard() {
   const [tab,setTab]=useState("orders"); const [categories,setCategories]=useState([]); const [items,setItems]=useState([]); const [orders,setOrders]=useState([]); const [settings,setSettings]=useState(DEFAULT_SETTINGS);
   const [editingItem,setEditingItem]=useState(null); const [editingCategory,setEditingCategory]=useState(null); const [notice,setNotice]=useState(""); const [seeding,setSeeding]=useState(false);
 
-  useEffect(()=>onAuthStateChanged(auth,async(u)=>{setUser(u); if(!u){setChecking(false);return;} const owner=await getDoc(doc(db,"owners",u.uid)); setIsOwner(owner.exists()); setChecking(false);}),[]);
-  useEffect(()=>{if(!isOwner)return; refreshMenu(); fetchSettings().then(setSettings); return subscribeToOrders(setOrders);},[isOwner]);
+ useEffect(() => {
+  return onAuthStateChanged(auth, async (u) => {
+    setUser(u);
+
+    if (!u) {
+      setChecking(false);
+      return;
+    }
+
+    try {
+      const owner = await getDoc(doc(db, "owners", u.uid));
+      setIsOwner(owner.exists());
+    } catch (error) {
+      console.error("Owner access check failed:", error);
+      setIsOwner(false);
+    } finally {
+      setChecking(false);
+    }
+  });
+}, []);  useEffect(()=>{if(!isOwner)return; refreshMenu(); fetchSettings().then(setSettings); return subscribeToOrders(setOrders);},[isOwner]);
   async function refreshMenu(){const d=await fetchMenu();setCategories(d.categories);setItems(d.items);}
   function showNotice(m){setNotice(m);setTimeout(()=>setNotice(""),4500)}
   async function initializeMenu(){if(!window.confirm("Load the prepared starter menu and prices? Existing items with the same IDs will be updated."))return;setSeeding(true);try{await seedMenu(defaultCategories,defaultItems);await refreshMenu();setSettings(await fetchSettings());showNotice("Starter menu loaded. You can now edit everything.")}catch(e){console.error(e);showNotice("Could not load the starter menu.")}finally{setSeeding(false)}}
