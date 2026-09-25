@@ -1,3 +1,4 @@
+import React from "react";
 import { Instagram, MapPin } from "lucide-react";
 import { DEFAULT_SETTINGS } from "../lib/data";
 
