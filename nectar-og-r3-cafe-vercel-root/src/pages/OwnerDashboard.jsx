@@ -16,8 +16,8 @@ export default function OwnerDashboard() {
   const [tab,setTab]=useState("orders"); const [categories,setCategories]=useState([]); const [items,setItems]=useState([]); const [orders,setOrders]=useState([]); const [settings,setSettings]=useState(DEFAULT_SETTINGS);
   const [editingItem,setEditingItem]=useState(null); const [editingCategory,setEditingCategory]=useState(null); const [notice,setNotice]=useState(""); const [seeding,setSeeding]=useState(false);
 
- useEffect(() => {
-  return onAuthStateChanged(auth, async (u) => {
+useEffect(() => {
+  const unsubscribe = onAuthStateChanged(auth, async (u) => {
     setUser(u);
 
     if (!u) {
@@ -35,6 +35,9 @@ export default function OwnerDashboard() {
       setChecking(false);
     }
   });
+
+  return unsubscribe;
+}, []);
 }, []);  useEffect(()=>{if(!isOwner)return; refreshMenu(); fetchSettings().then(setSettings); return subscribeToOrders(setOrders);},[isOwner]);
   async function refreshMenu(){const d=await fetchMenu();setCategories(d.categories);setItems(d.items);}
   function showNotice(m){setNotice(m);setTimeout(()=>setNotice(""),4500)}
