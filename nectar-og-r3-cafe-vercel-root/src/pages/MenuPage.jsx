@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import React, { useState } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { Search, ShoppingCart, Sparkles, Instagram, MapPin, UtensilsCrossed } from "lucide-react";
 import BrandHeader from "../components/BrandHeader";
