@@ -1,5 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Search, ShoppingCart, Sparkles, Instagram, MapPin, UtensilsCrossed } from "lucide-react";
+import {
+  Search,
+  ShoppingCart,
+  Sparkles,
+  Instagram,
+  MapPin,
+  UtensilsCrossed,
+  Phone
+} from "lucide-react";
 import BrandHeader from "../components/BrandHeader";
 import CartDrawer from "../components/CartDrawer";
 import CheckoutModal from "../components/CheckoutModal";
