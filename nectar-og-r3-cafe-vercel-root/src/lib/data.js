@@ -13,7 +13,7 @@ import {
   serverTimestamp,
   limit,
 } from "firebase/firestore";
-import { db } from "./firebase";
+import { db } from "./firebase.js";
 
 export const DEFAULT_SETTINGS = {
   cafeName: "Nectar OG R3 Cafe",
