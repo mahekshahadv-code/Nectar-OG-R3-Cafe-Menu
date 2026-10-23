@@ -6,7 +6,7 @@ import {
   Instagram,
   MapPin,
   UtensilsCrossed,
-  Phone
+  Phone,
 } from "lucide-react";
 import BrandHeader from "../components/BrandHeader";
 import CartDrawer from "../components/CartDrawer";
@@ -49,12 +49,12 @@ export default function MenuPage() {
     Promise.all([fetchMenu(), fetchSettings()])
       .then(([menu, site]) => {
         setCategories(
-          menu.categories.filter(
+          (menu.categories || []).filter(
             (category) => category.active !== false
           )
         );
-        setItems(menu.items);
-        setSettings(site);
+        setItems(menu.items || []);
+        setSettings(site || DEFAULT_SETTINGS);
       })
       .catch((err) => {
         console.error("Failed to load menu or cafe settings:", err);
@@ -65,7 +65,7 @@ export default function MenuPage() {
   const orderedCategories = useMemo(
     () =>
       [...(categories.length ? categories : fallbackCategories)].sort(
-        (a, b) => a.order - b.order
+        (a, b) => (a.order ?? 0) - (b.order ?? 0)
       ),
     [categories]
   );
@@ -84,14 +84,11 @@ export default function MenuPage() {
   }, [items, query]);
 
   const total = cart.reduce(
-    (sum, item) => sum + item.price * item.qty,
+    (sum, item) => sum + Number(item.price || 0) * item.qty,
     0
   );
 
-  const count = cart.reduce(
-    (sum, item) => sum + item.qty,
-    0
-  );
+  const count = cart.reduce((sum, item) => sum + item.qty, 0);
 
   function addToCart(item) {
     setCart((prev) => {
@@ -99,9 +96,7 @@ export default function MenuPage() {
 
       return found
         ? prev.map((x) =>
-            x.id === item.id
-              ? { ...x, qty: x.qty + 1 }
-              : x
+            x.id === item.id ? { ...x, qty: x.qty + 1 } : x
           )
         : [...prev, { ...item, qty: 1 }];
     });
@@ -109,12 +104,12 @@ export default function MenuPage() {
 
   function removeFromCart(id) {
     setCart((prev) =>
-      prev.flatMap((x) =>
-        x.id === id
-          ? x.qty > 1
-            ? [{ ...x, qty: x.qty - 1 }]
+      prev.flatMap((item) =>
+        item.id === id
+          ? item.qty > 1
+            ? [{ ...item, qty: item.qty - 1 }]
             : []
-          : [x]
+          : [item]
       )
     );
   }
@@ -127,7 +122,9 @@ export default function MenuPage() {
     setCheckoutOpen(false);
     setCartOpen(false);
     setCart([]);
-    setNotice(`Order ${result.orderCode} placed successfully.`);
+    setNotice(
+      `Order ${result?.orderCode || ""} placed successfully.`
+    );
     window.scrollTo({ top: 0, behavior: "smooth" });
     setTimeout(() => setNotice(""), 6000);
   }
@@ -156,6 +153,7 @@ export default function MenuPage() {
       </nav>
 
       <main>
+        {/* HERO SECTION */}
         <section className="hero-card">
           <div className="hero-copy">
             <span className="pill">
@@ -187,10 +185,10 @@ export default function MenuPage() {
           </div>
         </section>
 
-        {notice && (
-          <div className="success-box">{notice}</div>
-        )}
+        {/* ORDER SUCCESS MESSAGE */}
+        {notice && <div className="success-box">{notice}</div>}
 
+        {/* MENU SEARCH */}
         <section className="menu-toolbar">
           <div>
             <p className="eyebrow">OUR MENU</p>
@@ -201,12 +199,13 @@ export default function MenuPage() {
             <Search size={18} />
             <input
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(event) => setQuery(event.target.value)}
               placeholder="Search tea, juice, sandwich..."
             />
           </div>
         </section>
 
+        {/* CATEGORY NAVIGATION */}
         <div className="category-nav">
           {orderedCategories.map((cat) => (
             <a href={`#${cat.id}`} key={cat.id}>
@@ -215,6 +214,7 @@ export default function MenuPage() {
           ))}
         </div>
 
+        {/* MENU ITEMS */}
         {loading ? (
           <div className="loading">Loading fresh menu...</div>
         ) : (
@@ -223,8 +223,7 @@ export default function MenuPage() {
               const categoryItems = visibleItems
                 .filter((item) => item.categoryId === cat.id)
                 .sort(
-                  (a, b) =>
-                    (a.order ?? 0) - (b.order ?? 0)
+                  (a, b) => (a.order ?? 0) - (b.order ?? 0)
                 );
 
               if (!categoryItems.length) return null;
@@ -259,6 +258,7 @@ export default function MenuPage() {
                         </div>
 
                         <button
+                          type="button"
                           className="add-btn"
                           onClick={() => addToCart(item)}
                         >
@@ -270,14 +270,23 @@ export default function MenuPage() {
                 </section>
               );
             })}
+
+            {!visibleItems.length && (
+              <p className="loading">
+                {query
+                  ? "No menu items match your search."
+                  : "Menu items are currently unavailable."}
+              </p>
+            )}
           </div>
         )}
 
-        {/* CLICKABLE ADDRESS: OPENS THE NEW GOOGLE MAPS LOCATION */}
+        {/* CLICKABLE ROAD ADDRESS AND CONTACT DETAILS */}
         <section className="visit-card contact-card">
           <div className="visit-details">
             <p className="eyebrow">COME SAY HELLO</p>
-            <h2>{settings.cafeName}</h2>
+            <h2>{settings.cafeName || "Nectar OG R3 Cafe"}</h2>
+
             <p className="contact-subtitle">
               A co-brand of {settings.coBrand || "Juice Katey"}
             </p>
@@ -288,7 +297,7 @@ export default function MenuPage() {
                 href={GOOGLE_MAPS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Open the cafe address in Google Maps"
+                aria-label="Open Road No. 6 cafe location in Google Maps"
               >
                 {settings.address || "Road No. 6"}
               </a>
@@ -319,19 +328,23 @@ export default function MenuPage() {
             </a>
           </div>
 
-          <a
-            href={settings.instagramUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="instagram-btn"
-          >
-            <Instagram size={18} />
-            @{settings.instagramHandle}
-          </a>
+          {settings.instagramUrl && (
+            <a
+              href={settings.instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="instagram-btn"
+            >
+              <Instagram size={18} />
+              @{settings.instagramHandle || "Instagram"}
+            </a>
+          )}
         </section>
       </main>
 
+      {/* FLOATING CART BUTTON */}
       <button
+        type="button"
         className="floating-cart"
         onClick={() => setCartOpen(true)}
       >
@@ -346,5 +359,68 @@ export default function MenuPage() {
       {/* BOTTOM CONTACT FOOTER */}
       <footer className="cafe-footer">
         <div className="footer-brand">
-          <strong>{settings.cafeName}</strong>
-          <span> · {settings.coBrand ||
+          <strong>{settings.cafeName || "Nectar OG R3 Cafe"}</strong>
+          <span> · {settings.coBrand || "Juice Katey"}</span>
+        </div>
+
+        <div className="footer-contact-links">
+          <a href={`tel:${PHONE_NUMBER_1}`}>
+            <Phone size={15} />
+            {PHONE_NUMBER_1}
+          </a>
+
+          <a href={`tel:${PHONE_NUMBER_2}`}>
+            <Phone size={15} />
+            {PHONE_NUMBER_2}
+          </a>
+
+          <a
+            href={GOOGLE_MAPS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <MapPin size={15} />
+            Get Directions
+          </a>
+
+          {settings.instagramUrl && (
+            <a
+              href={settings.instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Instagram size={15} />
+              Instagram · @{settings.instagramHandle || "Instagram"}
+            </a>
+          )}
+        </div>
+      </footer>
+
+      {/* CART DRAWER */}
+      <CartDrawer
+        cart={cart}
+        open={cartOpen}
+        onClose={() => setCartOpen(false)}
+        onAdd={addToCart}
+        onRemove={removeFromCart}
+        onClear={clearCart}
+        total={total}
+        onCheckout={() => {
+          setCartOpen(false);
+          setCheckoutOpen(true);
+        }}
+      />
+
+      {/* CHECKOUT */}
+      {checkoutOpen && (
+        <CheckoutModal
+          cart={cart}
+          total={total}
+          tableNumber={tableNumber}
+          onClose={() => setCheckoutOpen(false)}
+          onSuccess={orderSuccess}
+        />
+      )}
+    </div>
+  );
+}
