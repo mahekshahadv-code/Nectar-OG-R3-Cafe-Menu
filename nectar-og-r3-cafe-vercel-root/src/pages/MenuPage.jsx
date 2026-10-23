@@ -15,7 +15,7 @@ import CheckoutModal from "../components/CheckoutModal";
 import { DEFAULT_SETTINGS, fetchMenu, fetchSettings } from "../lib/data";
 
 const GOOGLE_MAPS_URL =
-  "https://maps.app.goo.gl/d2W1SWNN3xApnyHD8";
+  "https://maps.app.goo.gl/mRBVdvByTGeSAUQ3A";
 
 const PHONE_NUMBER_1 = "7698937179";
 const PHONE_NUMBER_2 = "7670941997";
@@ -137,6 +137,35 @@ export default function MenuPage() {
     <div className="app-shell">
       <BrandHeader settings={settings} />
 
+      {/* TOP CONTACT BAR */}
+      <nav className="top-contact-bar" aria-label="Cafe contact details">
+        <a
+          href={GOOGLE_MAPS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="top-contact-link"
+        >
+          <MapPin size={17} />
+          <span>Our Location</span>
+        </a>
+
+        <a
+          href={`tel:${PHONE_NUMBER_1}`}
+          className="top-contact-link"
+        >
+          <Phone size={17} />
+          <span>{PHONE_NUMBER_1}</span>
+        </a>
+
+        <a
+          href={`tel:${PHONE_NUMBER_2}`}
+          className="top-contact-link"
+        >
+          <Phone size={17} />
+          <span>{PHONE_NUMBER_2}</span>
+        </a>
+      </nav>
+
       <main>
         <section className="hero-card">
           <div className="hero-copy">
@@ -198,9 +227,7 @@ export default function MenuPage() {
         </div>
 
         {loading ? (
-          <div className="loading">
-            Loading fresh menu...
-          </div>
+          <div className="loading">Loading fresh menu...</div>
         ) : (
           <div className="menu-sections">
             {orderedCategories.map((cat) => {
@@ -225,17 +252,12 @@ export default function MenuPage() {
                       <h3>{cat.name}</h3>
                     </div>
 
-                    <span>
-                      {categoryItems.length} choices
-                    </span>
+                    <span>{categoryItems.length} choices</span>
                   </div>
 
                   <div className="menu-grid">
                     {categoryItems.map((item) => (
-                      <article
-                        className="menu-card"
-                        key={item.id}
-                      >
+                      <article className="menu-card" key={item.id}>
                         <div className="menu-card-top">
                           <div>
                             <h4>{item.name}</h4>
@@ -262,43 +284,55 @@ export default function MenuPage() {
           </div>
         )}
 
-        {/* Updated Google Maps location and clickable phone numbers */}
+        {/* LOCATION AND CONTACT DETAILS */}
         <section className="visit-card contact-card">
-          <div>
+          <div className="visit-details">
             <p className="eyebrow">COME SAY HELLO</p>
             <h2>{settings.cafeName}</h2>
+            <p className="contact-subtitle">
+              A co-brand of {settings.coBrand || "Juice Katey"}
+            </p>
 
-            <p>
-              <MapPin size={17} />
+            <p className="contact-detail">
+              <MapPin size={18} />
               <a
                 href={GOOGLE_MAPS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {settings.address ||
-                  "Tap here to open our location in Google Maps"}
+                {settings.address || "Open our location in Google Maps"}
               </a>
             </p>
 
-            <p>
-              <Phone size={17} />
+            <p className="contact-detail">
+              <Phone size={18} />
               <a href={`tel:${PHONE_NUMBER_1}`}>
                 {PHONE_NUMBER_1}
               </a>
             </p>
 
-            <p>
-              <Phone size={17} />
+            <p className="contact-detail">
+              <Phone size={18} />
               <a href={`tel:${PHONE_NUMBER_2}`}>
                 {PHONE_NUMBER_2}
               </a>
             </p>
+
+            <a
+              href={GOOGLE_MAPS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="directions-btn"
+            >
+              <MapPin size={18} />
+              Get Directions
+            </a>
           </div>
 
           <a
             href={settings.instagramUrl}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="instagram-btn"
           >
             <Instagram size={18} />
@@ -319,19 +353,42 @@ export default function MenuPage() {
         </span>
       </button>
 
-      <footer>
-        <div>
+      {/* BOTTOM CONTACT FOOTER */}
+      <footer className="cafe-footer">
+        <div className="footer-brand">
           <strong>{settings.cafeName}</strong>
-          <span> · {settings.coBrand}</span>
+          <span> · {settings.coBrand || "Juice Katey"}</span>
         </div>
 
-        <a
-          href={settings.instagramUrl}
-          target="_blank"
-          rel="noreferrer"
-        >
-          Instagram · @{settings.instagramHandle}
-        </a>
+        <div className="footer-contact-links">
+          <a href={`tel:${PHONE_NUMBER_1}`}>
+            <Phone size={15} />
+            {PHONE_NUMBER_1}
+          </a>
+
+          <a href={`tel:${PHONE_NUMBER_2}`}>
+            <Phone size={15} />
+            {PHONE_NUMBER_2}
+          </a>
+
+          <a
+            href={GOOGLE_MAPS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <MapPin size={15} />
+            Get Directions
+          </a>
+
+          <a
+            href={settings.instagramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Instagram size={15} />
+            Instagram · @{settings.instagramHandle}
+          </a>
+        </div>
       </footer>
 
       <CartDrawer
