@@ -14,14 +14,11 @@ const firebaseConfig = {
   measurementId: "G-PKLYJP2PFV"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Export Authentication and Firestore for the website
-export const db = getFirestore(app);
+export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-// Initialize Analytics only when supported
 if (typeof window !== "undefined") {
   isSupported()
     .then((supported) => {
