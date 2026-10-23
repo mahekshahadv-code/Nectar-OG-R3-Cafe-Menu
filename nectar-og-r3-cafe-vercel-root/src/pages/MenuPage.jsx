@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Search,
@@ -15,7 +14,7 @@ import CheckoutModal from "../components/CheckoutModal";
 import { DEFAULT_SETTINGS, fetchMenu, fetchSettings } from "../lib/data";
 
 const GOOGLE_MAPS_URL =
-  "https://maps.app.goo.gl/mRBVdvByTGeSAUQ3A";
+  "https://maps.app.goo.gl/fbE83vvPFJr9XkKb7";
 
 const PHONE_NUMBER_1 = "7698937179";
 const PHONE_NUMBER_2 = "7670941997";
@@ -137,18 +136,8 @@ export default function MenuPage() {
     <div className="app-shell">
       <BrandHeader settings={settings} />
 
-      {/* TOP CONTACT BAR */}
+      {/* TOP CONTACT BAR: PHONE NUMBERS ONLY */}
       <nav className="top-contact-bar" aria-label="Cafe contact details">
-        <a
-          href={GOOGLE_MAPS_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="top-contact-link"
-        >
-          <MapPin size={17} />
-          <span>Our Location</span>
-        </a>
-
         <a
           href={`tel:${PHONE_NUMBER_1}`}
           className="top-contact-link"
@@ -284,7 +273,7 @@ export default function MenuPage() {
           </div>
         )}
 
-        {/* LOCATION AND CONTACT DETAILS */}
+        {/* CLICKABLE ADDRESS: OPENS THE NEW GOOGLE MAPS LOCATION */}
         <section className="visit-card contact-card">
           <div className="visit-details">
             <p className="eyebrow">COME SAY HELLO</p>
@@ -299,8 +288,9 @@ export default function MenuPage() {
                 href={GOOGLE_MAPS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Open the cafe address in Google Maps"
               >
-                {settings.address || "Open our location in Google Maps"}
+                {settings.address || "Road No. 6"}
               </a>
             </p>
 
@@ -357,60 +347,4 @@ export default function MenuPage() {
       <footer className="cafe-footer">
         <div className="footer-brand">
           <strong>{settings.cafeName}</strong>
-          <span> · {settings.coBrand || "Juice Katey"}</span>
-        </div>
-
-        <div className="footer-contact-links">
-          <a href={`tel:${PHONE_NUMBER_1}`}>
-            <Phone size={15} />
-            {PHONE_NUMBER_1}
-          </a>
-
-          <a href={`tel:${PHONE_NUMBER_2}`}>
-            <Phone size={15} />
-            {PHONE_NUMBER_2}
-          </a>
-
-          <a
-            href={GOOGLE_MAPS_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <MapPin size={15} />
-            Get Directions
-          </a>
-
-          <a
-            href={settings.instagramUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Instagram size={15} />
-            Instagram · @{settings.instagramHandle}
-          </a>
-        </div>
-      </footer>
-
-      <CartDrawer
-        cart={cart}
-        open={cartOpen}
-        onClose={() => setCartOpen(false)}
-        onAdd={addToCart}
-        onRemove={removeFromCart}
-        onClear={clearCart}
-        total={total}
-        onCheckout={() => setCheckoutOpen(true)}
-      />
-
-      {checkoutOpen && (
-        <CheckoutModal
-          cart={cart}
-          total={total}
-          tableNumber={tableNumber}
-          onClose={() => setCheckoutOpen(false)}
-          onSuccess={orderSuccess}
-        />
-      )}
-    </div>
-  );
-}
+          <span> · {settings.coBrand ||
