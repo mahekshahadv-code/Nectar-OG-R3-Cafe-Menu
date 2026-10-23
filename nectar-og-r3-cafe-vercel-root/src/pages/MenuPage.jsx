@@ -17,6 +17,9 @@ import { DEFAULT_SETTINGS, fetchMenu, fetchSettings } from "../lib/data";
 const GOOGLE_MAPS_URL =
   "https://maps.app.goo.gl/d2W1SWNN3xApnyHD8";
 
+const PHONE_NUMBER_1 = "7698937179";
+const PHONE_NUMBER_2 = "7670941997";
+
 const fallbackCategories = [
   { id: "hot-beverages", name: "Hot Beverages", order: 1, active: true },
   { id: "cold-coffee", name: "Cold Coffee", order: 2, active: true },
@@ -47,12 +50,16 @@ export default function MenuPage() {
     Promise.all([fetchMenu(), fetchSettings()])
       .then(([menu, site]) => {
         setCategories(
-          menu.categories.filter((category) => category.active !== false)
+          menu.categories.filter(
+            (category) => category.active !== false
+          )
         );
         setItems(menu.items);
         setSettings(site);
       })
-      .catch((err) => console.error(err))
+      .catch((err) => {
+        console.error("Failed to load menu or cafe settings:", err);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -82,7 +89,10 @@ export default function MenuPage() {
     0
   );
 
-  const count = cart.reduce((sum, item) => sum + item.qty, 0);
+  const count = cart.reduce(
+    (sum, item) => sum + item.qty,
+    0
+  );
 
   function addToCart(item) {
     setCart((prev) => {
@@ -90,7 +100,9 @@ export default function MenuPage() {
 
       return found
         ? prev.map((x) =>
-            x.id === item.id ? { ...x, qty: x.qty + 1 } : x
+            x.id === item.id
+              ? { ...x, qty: x.qty + 1 }
+              : x
           )
         : [...prev, { ...item, qty: 1 }];
     });
@@ -144,7 +156,8 @@ export default function MenuPage() {
             {tableNumber && (
               <div className="table-banner hero-table">
                 <UtensilsCrossed size={17} />
-                You are ordering for <strong>Table {tableNumber}</strong>
+                You are ordering for{" "}
+                <strong>Table {tableNumber}</strong>
               </div>
             )}
           </div>
@@ -156,7 +169,9 @@ export default function MenuPage() {
           </div>
         </section>
 
-        {notice && <div className="success-box">{notice}</div>}
+        {notice && (
+          <div className="success-box">{notice}</div>
+        )}
 
         <section className="menu-toolbar">
           <div>
@@ -183,13 +198,18 @@ export default function MenuPage() {
         </div>
 
         {loading ? (
-          <div className="loading">Loading fresh menu...</div>
+          <div className="loading">
+            Loading fresh menu...
+          </div>
         ) : (
           <div className="menu-sections">
             {orderedCategories.map((cat) => {
               const categoryItems = visibleItems
                 .filter((item) => item.categoryId === cat.id)
-                .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+                .sort(
+                  (a, b) =>
+                    (a.order ?? 0) - (b.order ?? 0)
+                );
 
               if (!categoryItems.length) return null;
 
@@ -204,12 +224,18 @@ export default function MenuPage() {
                       <p className="eyebrow">FRESHLY MADE</p>
                       <h3>{cat.name}</h3>
                     </div>
-                    <span>{categoryItems.length} choices</span>
+
+                    <span>
+                      {categoryItems.length} choices
+                    </span>
                   </div>
 
                   <div className="menu-grid">
                     {categoryItems.map((item) => (
-                      <article className="menu-card" key={item.id}>
+                      <article
+                        className="menu-card"
+                        key={item.id}
+                      >
                         <div className="menu-card-top">
                           <div>
                             <h4>{item.name}</h4>
@@ -217,6 +243,7 @@ export default function MenuPage() {
                               <p>{item.description}</p>
                             )}
                           </div>
+
                           <strong>₹{item.price}</strong>
                         </div>
 
@@ -235,7 +262,7 @@ export default function MenuPage() {
           </div>
         )}
 
-        {/* Location and contact details */}
+        {/* Updated Google Maps location and clickable phone numbers */}
         <section className="visit-card contact-card">
           <div>
             <p className="eyebrow">COME SAY HELLO</p>
@@ -255,12 +282,16 @@ export default function MenuPage() {
 
             <p>
               <Phone size={17} />
-              <a href="tel:7698937179">7698937179</a>
+              <a href={`tel:${PHONE_NUMBER_1}`}>
+                {PHONE_NUMBER_1}
+              </a>
             </p>
 
             <p>
               <Phone size={17} />
-              <a href="tel:7670941997">7670941997</a>
+              <a href={`tel:${PHONE_NUMBER_2}`}>
+                {PHONE_NUMBER_2}
+              </a>
             </p>
           </div>
 
