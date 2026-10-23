@@ -18,7 +18,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Export Authentication and Firestore for the website
-export const auth = getAuth(app);
+export const db = getFirestore(app);
 export const db = getFirestore(app);
 
 // Initialize Analytics only when supported
